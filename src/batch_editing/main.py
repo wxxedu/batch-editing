@@ -96,15 +96,21 @@ class BatchEditDialog(QDialog):
                                         QDialogButtonBox.ActionRole)
         replace_btn = button_box.addButton("&Replace",
                                            QDialogButtonBox.ActionRole)
+        # NOTE: added remove button
+        remove_btn = button_box.addButton("&Remove", QDialogButtonBox.ActionRole)
         close_btn = button_box.addButton("&Cancel",
                                          QDialogButtonBox.RejectRole)
         adda_btn.setToolTip("Add after existing field contents")
         addb_btn.setToolTip("Add before existing field contents")
         replace_btn.setToolTip("Replace existing field contents")
+        # NOTE: added remove button tooltip.
+        remove_btn.setToolTip("Remove first match in the existing field contents")
+        
         adda_btn.clicked.connect(lambda state, x="adda": self.onConfirm(x))
         addb_btn.clicked.connect(lambda state, x="addb": self.onConfirm(x))
         replace_btn.clicked.connect(
             lambda state, x="replace": self.onConfirm(x))
+        remove_btn.clicked.connect(lambda state, x="remove": self.onConfirm(x))
         close_btn.clicked.connect(self.close)
 
         self.cb_html = QCheckBox(self)
@@ -216,6 +222,9 @@ def batchEditNotes(browser, mode, nids, fld, html, isHtml=False):
                 note[fld] = html + spacer + content
             elif mode == "replace":
                 note[fld] = html
+            elif mode == "remove":
+                # NOTE: added remove that replaces the content with ''
+                note[fld] = note[fld].replace(html, '', 1)
             cnt += 1
             note.flush()
     browser.model.endReset()
